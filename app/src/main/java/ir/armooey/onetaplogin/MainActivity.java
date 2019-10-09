@@ -1,10 +1,15 @@
 package ir.armooey.onetaplogin;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.Checkable;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -46,7 +51,6 @@ public class MainActivity extends AppCompatActivity {
             user.setVisibility(View.VISIBLE);
             pass.setVisibility(View.VISIBLE);
             ok.setVisibility(View.VISIBLE);
-
             //Clicking on ok
             ok.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -55,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
                     if(usernameInput.equals("")  || passwordInput.equals(""))
                         Snackbar.make(v,"Fill the inputs",Snackbar.LENGTH_LONG).show();
                     else {
+
                         new Connect(MainActivity.this).execute(usernameInput,passwordInput);
                     }
 
@@ -66,5 +71,9 @@ public class MainActivity extends AppCompatActivity {
             //Not the first run
             new Connect(MainActivity.this).execute(pref.getString("username",""),pref.getString("password",""));
         }
+    }
+
+    public static MainActivity getInstance() {
+        return new MainActivity();
     }
 }

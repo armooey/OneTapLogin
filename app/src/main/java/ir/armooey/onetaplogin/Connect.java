@@ -2,10 +2,17 @@ package ir.armooey.onetaplogin;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Looper;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -28,7 +35,6 @@ public class Connect extends AsyncTask<String, Void, Void> {
     TextView con;
     ProgressBar pb;
 
-
     int result;
     String username,password;
     Activity mainActivity;
@@ -44,6 +50,7 @@ public class Connect extends AsyncTask<String, Void, Void> {
         pb = mainActivity.findViewById(R.id.progressBar);
     }
 
+
     //Updating UI elements before running the connection
     @Override
     protected void onPreExecute() {
@@ -52,6 +59,7 @@ public class Connect extends AsyncTask<String, Void, Void> {
         ok.setVisibility(View.INVISIBLE);
         con.setVisibility(View.VISIBLE);
         pb.setVisibility(View.VISIBLE);
+
     }
 
     //Handling the connection
@@ -98,20 +106,20 @@ public class Connect extends AsyncTask<String, Void, Void> {
     //Handling result of connection in here
     @Override
     protected void onPostExecute(Void aVoid) {
-        if(result == 0)
-        {
-            Toast.makeText(mainActivity.getApplicationContext(),".: Connected :.",Toast.LENGTH_LONG).show();
+        if(result == 0) {
             SharedPreferences pref = mainActivity.getSharedPreferences("data", Context.MODE_PRIVATE);
-            final SharedPreferences.Editor editor  = pref.edit();
-            editor.putBoolean("firstRun", false);
-            editor.putString("username", username);
-            editor.putString("password", password);
-            editor.apply();
+            if (pref.getBoolean("firstRun", true)) {
+                final SharedPreferences.Editor editor = pref.edit();
+                editor.putBoolean("firstRun", false);
+                editor.putString("username", username);
+                editor.putString("password", password);
+                editor.apply();
+            }
+            Toast.makeText(mainActivity.getApplicationContext(), ".: Connected :.", Toast.LENGTH_LONG).show();
             mainActivity.finish();
         }
-        else if(result == 1)
-        {
-            Toast.makeText(mainActivity.getApplicationContext(),"Already Connected!",Toast.LENGTH_LONG).show();
+        else if(result == 1) {
+            Toast.makeText(mainActivity.getApplicationContext(), "Already Connected!", Toast.LENGTH_LONG).show();
             mainActivity.finish();
         }
         else if(result == 2)
@@ -126,9 +134,8 @@ public class Connect extends AsyncTask<String, Void, Void> {
             pass.setText("");
             cancel(true);
         }
-        else if(result == 3)
-        {
-            Toast.makeText(mainActivity.getApplicationContext(),"Connection Failed!",Toast.LENGTH_LONG).show();
+        else if(result == 3) {
+            Toast.makeText(mainActivity.getApplicationContext(), "Connection Failed!", Toast.LENGTH_LONG).show();
             mainActivity.finish();
         }
     }
